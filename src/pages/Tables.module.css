@@ -1,0 +1,27 @@
+.container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    justify-items: center;
+  }
+  
+  .table {
+    width: 100px;
+    height: 100px;
+    font-size: 18px;
+    background: #f4f4f4;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .table:hover {
+    background: #e0e0e0;
+  }
+  
