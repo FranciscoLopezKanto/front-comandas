@@ -43,7 +43,7 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             to="/"
             sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
           >
-            Mi Resto App
+            Mi FKSudo
           </Typography>
 
           {/* Botones en Escritorio */}
