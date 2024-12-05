@@ -4,11 +4,11 @@ import styles from './Tables.module.css';
 export function Tables() {
   const navigate = useNavigate();
 
-  const tables = Array.from({ length: 10 }, (_, i) => i + 1); // Generar mesas 1-10
+  const tables = Array.from({ length: 9 }, (_, i) => i + 1); // Generar mesas 1-10
 
   return (
     <div className={styles.container}>
-      <h1>Selecciona una Mesa</h1>
+      <h1 className={styles.title}>Selecciona una Mesa</h1>
       <div className={styles.grid}>
         {tables.map((table) => (
           <button
