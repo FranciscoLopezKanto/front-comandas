@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Tables } from './pages/Tables';
-import { TableDetails } from './pages/TableDetails';
+import { Tables } from './pages/Tables/Tables';
+import { TableDetails } from './pages/Tables/Details/TableDetails';
 import { Login } from './pages/Login';
 import { Navbar } from './components/navbar';
 import { ThemeProvider } from '@mui/material/styles';
@@ -26,7 +26,7 @@ function App() {
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
   };
-
+ //falta ruta ventas , productos, agregar productos
   return (
     <Router>
       <ThemeProvider theme={theme}>

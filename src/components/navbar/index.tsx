@@ -62,6 +62,52 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             >
               Ir a Mesas
             </Button>
+
+            <Button
+              component={Link}
+              to="/ventas"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Gráficos ventas
+            </Button>
+
+            <Button
+              component={Link}
+              to="/productos"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Ver productos
+            </Button>
+
+            <Button
+              component={Link}
+              to="/productos/agregar"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Agregar productos
+            </Button>
+
             <Button
               variant="contained"
               color="secondary"
@@ -76,7 +122,7 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             </Button>
           </Box>
 
-          {/* Menú Hamburguesa para Móviles */}
+          {/* Botón del menú móvil */}
           <IconButton
             color="inherit"
             edge="start"
@@ -89,11 +135,7 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
       </AppBar>
 
       {/* Drawer para Móviles */}
-      <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={toggleDrawer(false)}
-      >
+      <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
         <Box
           sx={{ width: 250 }}
           role="presentation"
@@ -104,6 +146,21 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/">
                 <ListItemText primary="Ir a Mesas" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/ventas">
+                <ListItemText primary="Gráficos ventas" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/productos">
+                <ListItemText primary="Ver productos" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/productos/agregar">
+                <ListItemText primary="Agregar productos" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
