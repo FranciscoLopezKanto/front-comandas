@@ -1,7 +1,18 @@
-import React, { useState } from "react";
-import { Table, TableHead, TableBody, TableRow, TableCell, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Typography,
+  Snackbar,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 import { useMediaQuery, useTheme } from "@mui/system";
-import ProductItem from "./ProductItem";
+import axios from "axios";
 import ProductModal from "./AddProductModal";
 import {
   StyledContainer,
@@ -20,48 +31,86 @@ export type Product = {
   stock: number;
 };
 
-const initialProducts: Product[] = [
-  {
-    id: 1,
-    name: "Pizza",
-    category: "Comida",
-    price: 12000,
-    description: "Pizza de queso con orilla rellena",
-    stock: 10,
-  },
-  {
-    id: 2,
-    name: "Pasta",
-    category: "Comida",
-    price: 10000,
-    description: "Pasta con salsa boloñesa",
-    stock: 15,
-  },
-  {
-    id: 3,
-    name: "Bebida",
-    category: "Bebidas",
-    price: 5000,
-    description: "Coca-Cola 1L",
-    stock: 20,
-  },
-];
-
 const ProductList: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [notification, setNotification] = useState<string>(""); 
+  const [loading, setLoading] = useState<boolean>(true);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleAddProduct = (newProduct: Product) => {
-    setProducts((prevProducts) => [...prevProducts, { ...newProduct, id: prevProducts.length + 1 }]);
-    setIsModalOpen(false);
+  // Obtener productos desde la API
+  const fetchAllProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://localhost:3000/product");
+      console.log("Productos obtenidos:", response.data.data); // Verifica que los datos son correctos
+      setProducts(response.data.data); // Asegúrate de que `data` contiene los productos
+    } catch (error) {
+      console.error("Error al obtener productos:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteProduct = (id: number) => {
-    setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+  useEffect(() => {
+    fetchAllProducts();
+  }, []);
+
+  const handleAddProduct = async (newProduct: Product) => {
+    try {
+      const payload = {
+        name: newProduct.name,
+        price: Number(newProduct.price),
+        stock: Number(newProduct.stock),
+        description: newProduct.description,
+        category: newProduct.category,
+      };
+
+      const response = await axios.post("http://localhost:3000/product", payload);
+      setProducts((prevProducts) => [...prevProducts, response.data.data]);
+      setNotification("Producto agregado exitosamente");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error al agregar producto:", error);
+      setNotification("Error al agregar el producto");
+    }
   };
+
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3000/product/${id}`);
+      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+      setNotification("Producto eliminado exitosamente");
+    } catch (error) {
+      console.error("Error al eliminar producto:", error);
+      setNotification("Error al eliminar el producto");
+    }
+  };
+
+  const handleCloseNotification = () => {
+    setNotification("");
+  };
+
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={5}>
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Cargando productos...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <Box textAlign="center" mt={5}>
+        <Typography variant="h6">No hay productos disponibles.</Typography>
+      </Box>
+    );
+  }
 
   return (
     <StyledContainer>
@@ -93,6 +142,7 @@ const ProductList: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>ID</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Categoría</TableCell>
                 <TableCell>Precio</TableCell>
@@ -103,11 +153,19 @@ const ProductList: React.FC = () => {
             </TableHead>
             <TableBody>
               {products.map((product) => (
-                <ProductItem
-                  key={product.id}
-                  product={product}
-                  onDelete={handleDeleteProduct}
-                />
+                <TableRow key={product.id}>
+                  <TableCell>{product.id}</TableCell>
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell>{product.category}</TableCell>
+                  <TableCell>CLP${product.price.toLocaleString()}</TableCell>
+                  <TableCell>{product.description}</TableCell>
+                  <TableCell>{product.stock}</TableCell>
+                  <TableCell align="right">
+                    <OrangeButton size="small" onClick={() => handleDeleteProduct(product.id)}>
+                      Eliminar
+                    </OrangeButton>
+                  </TableCell>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
@@ -119,6 +177,17 @@ const ProductList: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleAddProduct}
       />
+
+      <Snackbar
+        open={!!notification}
+        autoHideDuration={3000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseNotification} severity="success" sx={{ width: "100%" }}>
+          {notification}
+        </Alert>
+      </Snackbar>
     </StyledContainer>
   );
 };

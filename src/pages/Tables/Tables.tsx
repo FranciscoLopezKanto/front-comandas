@@ -1,14 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useTables } from "./TablesContext";
 import styles from './Tables.module.css';
 
 export function Tables() {
   const navigate = useNavigate();
+  const { tables } = useTables();
 
-  // Define las mesas con su estado (abierta o libre)
-  const tables = Array.from({ length: 9 }, (_, i) => ({
-    id: i + 1,
-    status: i === 1 || i === 4 ? 'open' : 'free', // Mesas 2 y 5 están abiertas
-  }));
+  const handleTableClick = (id: number) => {
+    navigate(`/table/${id}`);
+  };
 
   return (
     <div className={styles.container}>
@@ -17,16 +18,14 @@ export function Tables() {
         {tables.map((table) => (
           <button
             key={table.id}
-            className={`${styles.table} ${
-              table.status === 'open' ? styles.open : styles.free
-            }`}
-            onClick={() => navigate(`/table/${table.id}`)}
+            className={`${styles.table} ${table.status === 1 ? styles.occupied : styles.free}`}
+            onClick={() => handleTableClick(table.id)}
           >
             <div className={styles.tableContent}>
               <span>Mesa {table.id}</span>
-              {table.status === 'open' && (
-                <span className={styles.status}>Activa</span>
-              )}
+              <span className={styles.status}>
+                {table.status === 1 ? "Ocupada" : "Libre"}
+              </span>
             </div>
           </button>
         ))}
@@ -34,3 +33,5 @@ export function Tables() {
     </div>
   );
 }
+
+export default Tables;

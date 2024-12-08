@@ -7,10 +7,11 @@ import ProductList from './pages/products/ProductList';
 import { Navbar } from './components/navbar';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './components/theme';
+import { AddProduct } from './pages/products/AddProduct';
+import ViewAllProduct from './pages/products/ViewAllProduct'; // Asegúrate de importar el TablesProvider
+import { TablesProvider } from './pages/Tables/TablesContext';
 
 function App() {
-  
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -27,24 +28,28 @@ function App() {
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
   };
- //falta ruta ventas , productos, agregar productos
+
   return (
     <Router>
       <ThemeProvider theme={theme}>
-      {isLoggedIn ? (
-        <>
-          <Routes>
-            <Route path="/" element={<Tables />} />
-            <Route path="/table/:id" element={<TableDetails />} />
-            <Route path='/productos' element={<ProductList />} />
-          </Routes>
-          <Navbar onLogout={handleLogout} />
-        </>
-      ) : (
-        <Routes>
-          <Route path="*" element={<Login onLogin={handleLogin} />} />
-        </Routes>
-      )}
+        <TablesProvider>  {/* Asegúrate de envolver el contenido que usa el contexto */}
+          {isLoggedIn ? (
+            <>
+              <Navbar onLogout={handleLogout} />
+              <Routes>
+                <Route path="/" element={<Tables />} />
+                <Route path="/table/:id" element={<TableDetails />} />
+                <Route path="/productos" element={<ProductList />} />
+                <Route path="/productos/agregar" element={<AddProduct />} />
+                <Route path="/productos/ver-todos" element={<ViewAllProduct />} />
+              </Routes>
+            </>
+          ) : (
+            <Routes>
+              <Route path="*" element={<Login onLogin={handleLogin} />} />
+            </Routes>
+          )}
+        </TablesProvider>
       </ThemeProvider>
     </Router>
   );

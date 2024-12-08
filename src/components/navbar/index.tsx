@@ -108,6 +108,22 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
               Agregar productos
             </Button>
 
+            {/* Nueva opción para Ver Todos los Productos */}
+            <Button
+              component={Link}
+              to="/productos/ver-todos"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Ver Todos los Productos
+            </Button>
+
             <Button
               variant="contained"
               color="secondary"
@@ -161,6 +177,12 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/productos/agregar">
                 <ListItemText primary="Agregar productos" />
+              </ListItemButton>
+            </ListItem>
+            {/* Nueva opción en el Drawer */}
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/productos/ver-todos">
+                <ListItemText primary="Ver Todos los Productos" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

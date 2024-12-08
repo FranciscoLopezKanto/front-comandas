@@ -58,15 +58,16 @@
   gap: 10px;
 }
 
-/* Estilos para mesas abiertas */
-.open {
-  background-color: #ff6b6b;
+/* Estilos para mesas ocupadas */
+.occupied {
+  background-color: #dc3545; /* Rojo */
   color: white;
 }
 
 /* Estilos para mesas libres */
 .free {
-  background-color: #f7f7f7;
+  background-color: #28a745; /* Verde */
+  color: white;
 }
 
 /* Estilos para el texto de estado */

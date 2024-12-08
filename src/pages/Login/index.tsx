@@ -11,10 +11,12 @@ export const Login = ({ onLogin }: LoginProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === 'admin' && password === 'password') {
+
+    // Permitir siempre que se use el email "seba" y la contraseña "123456"
+    if (email === 'seba' && password === '123456') {
       onLogin();
     } else {
-      alert('Credenciales inválidas');
+      alert('Debes ingresar con correo "seba" y contraseña "123456"');
     }
   };
 
