@@ -47,13 +47,9 @@ export function TableDetails() {
 
   const handleConfirmProduct = (product: Product) => {
     setProducts((prev) => {
-      const existingProductIndex = prev.findIndex((p) => p.id === product.id);
-      if (existingProductIndex !== -1) {
-        const updatedProducts = [...prev];
-        updatedProducts[existingProductIndex] = product;
-        return updatedProducts;
-      }
-      return [...prev, product];
+      // Agrega el producto como un nuevo elemento, independientemente de si ya existe o no
+      const newProduct = { ...product, comment: product.comment || "" };
+      return [...prev, newProduct]; // Agrega el nuevo producto sin eliminar ni actualizar nada
     });
   };
 
