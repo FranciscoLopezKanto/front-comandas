@@ -1,5 +1,17 @@
-import { useState, useEffect, useContext } from "react";
-import { Button, Typography, Box, Card, CardContent, CardActions, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Button,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  TextField,
+} from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTables } from "../TablesContext";
 import { GetOrderIdContext } from "../GetOrderIdContext";
@@ -21,7 +33,8 @@ export function TableDetails() {
   const [cart, setCart] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  // Recuperar carrito de localStorage solo si la mesa está en pedido
+  const [notes, setNotes] = useState<{ [productId: number]: string }>({});
+
   useEffect(() => {
     if (isOccupied) {
       const storedCart = localStorage.getItem(`table_${tableId}_cart`);
@@ -29,7 +42,7 @@ export function TableDetails() {
         setCart(JSON.parse(storedCart));
       }
     } else {
-      setCart([]); // Limpiar el carrito si la mesa no está ocupada
+      setCart([]);
     }
   }, [tableId, isOccupied]);
 
@@ -80,43 +93,72 @@ export function TableDetails() {
     }
   };
 
-  const saveCartToLocalStorage = (currentCart: any[]) => {
-    localStorage.setItem(`table_${tableId}_cart`, JSON.stringify(currentCart));
+  const handleRemoveFromCart = (productId: number) => {
+    const updatedCart = cart
+      .map((item) =>
+        item.id === productId
+          ? { ...item, quantity: item.quantity - 1, totalPrice: item.totalPrice - item.price }
+          : item
+      )
+      .filter((item) => item.quantity > 0); // Filtrar los productos con cantidad 0
+    setCart(updatedCart);
+  };
+
+  const handleNoteChange = (productId: number, note: string) => {
+    setNotes((prevNotes) => ({ ...prevNotes, [productId]: note }));
   };
 
   const getCartTotal = () => {
     return cart.reduce((total, item) => total + item.totalPrice, 0);
   };
 
+  const saveCartToLocalStorage = (currentCart: any[], currentNotes: { [productId: number]: string }) => {
+    localStorage.setItem(`table_${tableId}_cart`, JSON.stringify(currentCart));
+    localStorage.setItem(`table_${tableId}_notes`, JSON.stringify(currentNotes)); // Guardar notas
+  };
+  
   const handleTableInOrder = () => {
-    // Guardar el carrito actual en localStorage
-    saveCartToLocalStorage(cart);
-
-    // Cambiar el estado de la mesa a "ocupada"
+    saveCartToLocalStorage(cart, notes);
     setTableStatus(tableId, 1);
     setIsOccupied(true);
-
-    alert("El carrito actual ha sido guardado. La mesa está en pedido.");
+    alert("El carrito actual y las notas han sido guardados. La mesa está en pedido.");
   };
-
+  
+  // Al cargar el carrito y notas guardadas desde localStorage:
+  useEffect(() => {
+    if (isOccupied) {
+      const storedCart = localStorage.getItem(`table_${tableId}_cart`);
+      const storedNotes = localStorage.getItem(`table_${tableId}_notes`);
+  
+      if (storedCart) {
+        setCart(JSON.parse(storedCart));
+      }
+      if (storedNotes) {
+        setNotes(JSON.parse(storedNotes));
+      }
+    } else {
+      setCart([]);
+      setNotes({});
+    }
+  }, [tableId, isOccupied]);
+  
   const sendOrder = async () => {
-    const user_id = 1; // Usuario temporal
+    const user_id = 1;
     const tablenumber = tableId;
-
+  
     try {
-      // Llamar a refreshOrderId para obtener el último `order_id` antes de hacer los pedidos
       const refreshedOrderIdBefore = await refreshOrderId();
-      console.log('Nuevo order_id antes de hacer los pedidos:', refreshedOrderIdBefore); // Muestra el `order_id` actualizado
-
-      // Enviar las órdenes individuales primero
+      console.log("Nuevo order_id antes de hacer los pedidos:", refreshedOrderIdBefore);
+  
       for (const item of cart) {
         const orderData = {
           user_id,
           product_id: item.id,
           quantity: item.quantity,
           tablenumber,
+          note: notes[item.id] || "", // Enviar la nota asociada al producto
         };
-
+  
         const response = await fetch("http://localhost:3000/order", {
           method: "POST",
           headers: {
@@ -124,35 +166,34 @@ export function TableDetails() {
           },
           body: JSON.stringify(orderData),
         });
-
+  
         if (!response.ok) {
           throw new Error(`Error al enviar el pedido para el producto ${item.name}`);
         }
       }
-
+  
       alert("Pedido enviado con éxito");
-
-      // Obtener el último `order_id` después de enviar las órdenes
+  
       const refreshedOrderIdAfter = await refreshOrderId();
-      console.log('Nuevo order_id después de hacer los pedidos:', refreshedOrderIdAfter); // Muestra el `order_id` actualizado
-
-      // Ahora se completa la orden más reciente
+      console.log("Nuevo order_id después de hacer los pedidos:", refreshedOrderIdAfter);
+  
       if (refreshedOrderIdAfter !== null) {
         const updateResponse = await updateOrderStatus(refreshedOrderIdAfter);
-        console.log(updateResponse); // Log de respuesta de la actualización de estado
+        console.log(updateResponse);
       }
-
-      // Borrar el carrito después de enviar el pedido
+  
       localStorage.removeItem(`table_${tableId}_cart`);
-
+      localStorage.removeItem(`table_${tableId}_notes`); // Limpiar las notas del localStorage
       setIsOccupied(false);
-      setTableStatus(tableId, 0); // Cambiar estado a "libre"
-      setCart([]); // Limpiar el carrito en el estado
+      setTableStatus(tableId, 0);
+      setCart([]);
+      setNotes({}); // Limpiar notas
     } catch (error) {
       console.error("Error al enviar el pedido:", error);
       alert("Error al enviar el pedido. Inténtalo nuevamente.");
     }
   };
+  
 
   return (
     <Box sx={{ padding: 2, marginTop: "80px" }}>
@@ -214,11 +255,31 @@ export function TableDetails() {
 
           <Box sx={{ backgroundColor: "#fff", padding: 2, borderRadius: 2, boxShadow: 2 }}>
             {cart.length > 0 ? (
-              cart.map((item, index) => (
-                <Box key={index} sx={{ marginBottom: 2 }}>
+              cart.map((item) => (
+                <Box key={item.id} sx={{ marginBottom: 2 }}>
                   <Typography>
                     {item.name} - ${item.totalPrice} (x{item.quantity})
                   </Typography>
+
+                  {/* Caja para escribir una nota */}
+                  <TextField
+                    label="Nota"
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                    value={notes[item.id] || ""}
+                    onChange={(e) => handleNoteChange(item.id, e.target.value)}
+                    sx={{ marginTop: 1, width: "100%" }}
+                  />
+
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleRemoveFromCart(item.id)}
+                    sx={{ marginTop: 1 }}
+                  >
+                    Quitar uno
+                  </Button>
                 </Box>
               ))
             ) : (

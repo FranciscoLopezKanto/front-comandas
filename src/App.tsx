@@ -8,14 +8,14 @@ import { Navbar } from './components/navbar';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './components/theme';
 import { AddProduct } from './pages/products/AddProduct';
-import ViewAllProduct from './pages/products/ViewAllProduct'; // Asegúrate de importar el TablesProvider
+import ViewAllProduct from './pages/products/ViewAllProduct';
 import { TablesProvider } from './pages/Tables/TablesContext';
 import { SalesChart } from './pages/Sells';
-
 import { GetOrderIdProvider } from './pages/Tables/GetOrderIdContext';
 import { ViewOrders } from './pages/orders/ViewOrders';
 import { PostCompleteOrderProvider } from './pages/Tables/PostCompleteOrder';
- // Importar el GeoOrderIdProvider
+import { UserProvider } from './components/Subcomponent/UserContext';
+import { Register } from './pages/Register/register';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,8 +25,8 @@ function App() {
     setIsLoggedIn(!!token);
   }, []);
 
-  const handleLogin = () => {
-    localStorage.setItem('authToken', 'sample-token'); // Simula autenticación
+  const handleLogin = (token: string) => {
+    localStorage.setItem('authToken', token); // Guarda el token del usuario autenticado
     setIsLoggedIn(true);
   };
 
@@ -36,34 +36,38 @@ function App() {
   };
 
   return (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <GetOrderIdProvider>  {/* Envuelve la aplicación con el GeoOrderIdProvider */}
-        <PostCompleteOrderProvider>
-            <TablesProvider>  {/* Envuelve también el contenido con el TablesProvider */}
-              {isLoggedIn ? (
-                <>
-                  <Navbar onLogout={handleLogout} />
+    <UserProvider>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <GetOrderIdProvider>
+            <PostCompleteOrderProvider>
+              <TablesProvider>
+                {isLoggedIn ? (
+                  <>
+                    <Navbar onLogout={handleLogout} />
+                    <Routes>
+                      <Route path="/" element={<Tables />} />
+                      <Route path="/table/:id" element={<TableDetails />} />
+                      <Route path="/productos" element={<ProductList />} />
+                      <Route path="/productos/agregar" element={<AddProduct />} />
+                      <Route path="/productos/ver-todos" element={<ViewAllProduct />} />
+                      <Route path="/sells" element={<SalesChart />} />
+                      <Route path="/ordenes" element={<ViewOrders />} />
+                    </Routes>
+                  </>
+                ) : (
                   <Routes>
-                    <Route path="/" element={<Tables />} />
-                    <Route path="/table/:id" element={<TableDetails />} />
-                    <Route path="/productos" element={<ProductList />} />
-                    <Route path="/productos/agregar" element={<AddProduct />} />
-                    <Route path="/productos/ver-todos" element={<ViewAllProduct />} />
-                    <Route path="/sells" element={<SalesChart />} />
-                    <Route path="/ordenes" element={<ViewOrders />} /> {/* Nueva ruta */}
+                    <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="*" element={<Login onLogin={handleLogin} />} />
                   </Routes>
-                </>
-              ) : (
-                <Routes>
-                  <Route path="*" element={<Login onLogin={handleLogin} />} />
-                </Routes>
-              )}
-            </TablesProvider>
+                )}
+              </TablesProvider>
             </PostCompleteOrderProvider>
-        </GetOrderIdProvider>
-      </ThemeProvider>
-    </Router>
+          </GetOrderIdProvider>
+        </ThemeProvider>
+      </Router>
+    </UserProvider>
   );
 }
 
