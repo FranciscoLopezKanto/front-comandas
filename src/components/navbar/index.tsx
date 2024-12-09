@@ -108,7 +108,6 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
               Agregar productos
             </Button>
 
-            {/* Nueva opción para Ver Todos los Productos */}
             <Button
               component={Link}
               to="/productos/ver-todos"
@@ -123,6 +122,39 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             >
               Ver Todos los Productos
             </Button>
+
+            {/* Nuevo botón para la vista Sells */}
+            <Button
+              component={Link}
+              to="/sells"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Ventas
+            </Button>
+            
+            <Button
+              component={Link}
+              to="/ordenes"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Ver Órdenes
+            </Button>
+
+
 
             <Button
               variant="contained"
@@ -179,10 +211,15 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
                 <ListItemText primary="Agregar productos" />
               </ListItemButton>
             </ListItem>
-            {/* Nueva opción en el Drawer */}
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/productos/ver-todos">
                 <ListItemText primary="Ver Todos los Productos" />
+              </ListItemButton>
+            </ListItem>
+            {/* Nueva opción para la vista Sells */}
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/sells">
+                <ListItemText primary="Ventas" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

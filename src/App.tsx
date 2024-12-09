@@ -10,6 +10,12 @@ import theme from './components/theme';
 import { AddProduct } from './pages/products/AddProduct';
 import ViewAllProduct from './pages/products/ViewAllProduct'; // Asegúrate de importar el TablesProvider
 import { TablesProvider } from './pages/Tables/TablesContext';
+import { SalesChart } from './pages/Sells';
+
+import { GetOrderIdProvider } from './pages/Tables/GetOrderIdContext';
+import { ViewOrders } from './pages/orders/ViewOrders';
+import { PostCompleteOrderProvider } from './pages/Tables/PostCompleteOrder';
+ // Importar el GeoOrderIdProvider
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -32,24 +38,30 @@ function App() {
   return (
     <Router>
       <ThemeProvider theme={theme}>
-        <TablesProvider>  {/* Asegúrate de envolver el contenido que usa el contexto */}
-          {isLoggedIn ? (
-            <>
-              <Navbar onLogout={handleLogout} />
-              <Routes>
-                <Route path="/" element={<Tables />} />
-                <Route path="/table/:id" element={<TableDetails />} />
-                <Route path="/productos" element={<ProductList />} />
-                <Route path="/productos/agregar" element={<AddProduct />} />
-                <Route path="/productos/ver-todos" element={<ViewAllProduct />} />
-              </Routes>
-            </>
-          ) : (
-            <Routes>
-              <Route path="*" element={<Login onLogin={handleLogin} />} />
-            </Routes>
-          )}
-        </TablesProvider>
+        <GetOrderIdProvider>  {/* Envuelve la aplicación con el GeoOrderIdProvider */}
+        <PostCompleteOrderProvider>
+            <TablesProvider>  {/* Envuelve también el contenido con el TablesProvider */}
+              {isLoggedIn ? (
+                <>
+                  <Navbar onLogout={handleLogout} />
+                  <Routes>
+                    <Route path="/" element={<Tables />} />
+                    <Route path="/table/:id" element={<TableDetails />} />
+                    <Route path="/productos" element={<ProductList />} />
+                    <Route path="/productos/agregar" element={<AddProduct />} />
+                    <Route path="/productos/ver-todos" element={<ViewAllProduct />} />
+                    <Route path="/sells" element={<SalesChart />} />
+                    <Route path="/ordenes" element={<ViewOrders />} /> {/* Nueva ruta */}
+                  </Routes>
+                </>
+              ) : (
+                <Routes>
+                  <Route path="*" element={<Login onLogin={handleLogin} />} />
+                </Routes>
+              )}
+            </TablesProvider>
+            </PostCompleteOrderProvider>
+        </GetOrderIdProvider>
       </ThemeProvider>
     </Router>
   );

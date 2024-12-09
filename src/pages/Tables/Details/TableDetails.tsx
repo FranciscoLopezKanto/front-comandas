@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button, Typography, Box, Card, CardContent, CardActions, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTables } from "../TablesContext";
+import { GetOrderIdContext } from "../GetOrderIdContext";
+import { PostCompleteOrderContext } from "../PostCompleteOrder";
 
 export function TableDetails() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { tables, setTableStatus } = useTables();
+  const { lastOrderId, fetchLastOrderId, refreshOrderId } = useContext(GetOrderIdContext)!;
+  const { updateOrderStatus } = useContext(PostCompleteOrderContext)!;
   const tableId = parseInt(id || "0");
 
   const table = tables.find((table) => table.id === tableId);
@@ -100,6 +104,11 @@ export function TableDetails() {
     const tablenumber = tableId;
 
     try {
+      // Llamar a refreshOrderId para obtener el último `order_id` antes de hacer los pedidos
+      const refreshedOrderIdBefore = await refreshOrderId();
+      console.log('Nuevo order_id antes de hacer los pedidos:', refreshedOrderIdBefore); // Muestra el `order_id` actualizado
+
+      // Enviar las órdenes individuales primero
       for (const item of cart) {
         const orderData = {
           user_id,
@@ -122,6 +131,16 @@ export function TableDetails() {
       }
 
       alert("Pedido enviado con éxito");
+
+      // Obtener el último `order_id` después de enviar las órdenes
+      const refreshedOrderIdAfter = await refreshOrderId();
+      console.log('Nuevo order_id después de hacer los pedidos:', refreshedOrderIdAfter); // Muestra el `order_id` actualizado
+
+      // Ahora se completa la orden más reciente
+      if (refreshedOrderIdAfter !== null) {
+        const updateResponse = await updateOrderStatus(refreshedOrderIdAfter);
+        console.log(updateResponse); // Log de respuesta de la actualización de estado
+      }
 
       // Borrar el carrito después de enviar el pedido
       localStorage.removeItem(`table_${tableId}_cart`);

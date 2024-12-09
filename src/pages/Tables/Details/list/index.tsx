@@ -1,6 +1,7 @@
 import { List, ListItem, ListItemText, Paper, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Product } from '../TableDetails';
+import { Product } from '../../../products/ProductList';
+
 
 type ProductListProps = {
   products: Product[];
