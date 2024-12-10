@@ -123,16 +123,22 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = async (name: string) => {
     try {
-      await axios.delete(`http://localhost:3000/product/${id}`);
-      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+      // Enviamos un JSON con el nombre del producto en el cuerpo de la solicitud DELETE
+      await axios.delete("http://localhost:3000/product/", {
+        data: { name }, // El body de la solicitud contiene el nombre
+      });
+  
+      // Filtramos el producto eliminado del estado local
+      setProducts((prevProducts) => prevProducts.filter((product) => product.name !== name));
       setNotification("Producto eliminado exitosamente");
     } catch (error) {
       console.error("Error al eliminar el producto:", error);
       setNotification("Error al eliminar el producto");
     }
   };
+  
 
   const handleCloseNotification = () => {
     setNotification("");
@@ -196,7 +202,7 @@ const ProductList: React.FC = () => {
                 <Button
                   size="small"
                   color="error"
-                  onClick={() => handleDeleteProduct(product.id)}
+                  onClick={() => handleDeleteProduct(product.name)}
                   startIcon={<Delete />}
                 >
                   Eliminar
@@ -240,7 +246,7 @@ const ProductList: React.FC = () => {
                       <Button
                         size="small"
                         color="error"
-                        onClick={() => handleDeleteProduct(product.id)}
+                        onClick={() => handleDeleteProduct(product.name)}
                         startIcon={<Delete />}
                       >
                         Eliminar
