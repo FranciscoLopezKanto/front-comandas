@@ -9,36 +9,38 @@ type ProductModalProps = {
   onConfirm: (product: Product) => void;
 };
 
-const categoryOptions = ["Entrada", "Principal", "Bebidas"];
+const categories = ["Bebida", "Comida", "Entrada", "Principal", "Postre"]; // Categorías actualizadas
 
 const ProductModal: React.FC<ProductModalProps> = ({ open, onClose, onConfirm }) => {
   const [name, setName] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
   const [price, setPrice] = useState<number | "">("");
-  const [description, setDescription] = useState<string>("");
   const [stock, setStock] = useState<number | "">("");
+  const [description, setDescription] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
 
   const handleConfirm = () => {
-    if (!name || !category || !price || !stock) {
+    if (!name || !category || !price || !stock || !description) {
       alert("Por favor, completa todos los campos obligatorios.");
       return;
     }
 
-    onConfirm({
-      id: 0, // Este ID será generado por la lista
+    const newProduct: Product = {
+      id: 0, // Se asignará en la lista principal
       name,
       category,
       price: Number(price),
       description,
       stock: Number(stock),
-    });
+    };
 
-    // Reinicia los campos después de confirmar
+    onConfirm(newProduct);
+
+    // Reiniciar los campos después de confirmar
     setName("");
-    setCategory("");
     setPrice("");
-    setDescription("");
     setStock("");
+    setDescription("");
+    setCategory("");
   };
 
   return (
@@ -60,31 +62,20 @@ const ProductModal: React.FC<ProductModalProps> = ({ open, onClose, onConfirm })
           Agregar Producto
         </Typography>
 
+        {/* Campo: Nombre */}
         <TextField
-          label="Nombre del producto"
+          label="Nombre del Producto"
           value={name}
           onChange={(e) => setName(e.target.value)}
           fullWidth
           sx={{ mb: 2 }}
           required
+          InputProps={{
+            style: { backgroundColor: "white" },
+          }}
         />
 
-        <TextField
-          select
-          label="Categoría"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-          required
-        >
-          {categoryOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
-
+        {/* Campo: Precio */}
         <TextField
           label="Precio (CLP)"
           type="number"
@@ -93,18 +84,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ open, onClose, onConfirm })
           fullWidth
           sx={{ mb: 2 }}
           required
+          InputProps={{
+            style: { backgroundColor: "white" },
+          }}
         />
 
-        <TextField
-          label="Descripción"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          fullWidth
-          multiline
-          rows={3}
-          sx={{ mb: 2 }}
-        />
-
+        {/* Campo: Stock */}
         <TextField
           label="Stock"
           type="number"
@@ -113,7 +98,45 @@ const ProductModal: React.FC<ProductModalProps> = ({ open, onClose, onConfirm })
           fullWidth
           sx={{ mb: 2 }}
           required
+          InputProps={{
+            style: { backgroundColor: "white" },
+          }}
         />
+
+        {/* Campo: Descripción */}
+        <TextField
+          label="Descripción"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          fullWidth
+          multiline
+          rows={3}
+          sx={{ mb: 2 }}
+          required
+          InputProps={{
+            style: { backgroundColor: "white" },
+          }}
+        />
+
+        {/* Campo: Categoría */}
+        <TextField
+          select
+          label="Categoría"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          fullWidth
+          sx={{ mb: 2 }}
+          required
+          InputProps={{
+            style: { backgroundColor: "white" },
+          }}
+        >
+          {categories.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
 
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
           <Button variant="outlined" onClick={onClose}>

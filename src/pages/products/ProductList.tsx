@@ -34,19 +34,26 @@ export type Product = {
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [notification, setNotification] = useState<string>(""); 
+  const [notification, setNotification] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Desactivar el scroll del navegador
+  useEffect(() => {
+    document.body.style.overflow = "hidden"; // Desactiva el scroll del navegador
+    return () => {
+      document.body.style.overflow = "auto"; // Reactiva el scroll al desmontar
+    };
+  }, []);
 
   // Obtener productos desde la API
   const fetchAllProducts = async () => {
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:3000/product");
-      console.log("Productos obtenidos:", response.data.data); // Verifica que los datos son correctos
-      setProducts(response.data.data); // Asegúrate de que `data` contiene los productos
+      setProducts(response.data.data);
     } catch (error) {
       console.error("Error al obtener productos:", error);
     } finally {
@@ -120,9 +127,16 @@ const ProductList: React.FC = () => {
 
       <OrangeButton onClick={() => setIsModalOpen(true)}>Agregar Producto</OrangeButton>
 
-      {isMobile ? (
-        <>
-          {products.map((product) => (
+      <Box
+        sx={{
+          maxHeight: "450px", // Caja más alta
+          overflowY: "scroll", // Barra de desplazamiento personalizada
+          border: "1px solid #ccc",
+          mt: 2,
+        }}
+      >
+        {isMobile ? (
+          products.map((product) => (
             <StyledMobileCard key={product.id}>
               <Typography variant="h6" color="primary">
                 {product.name}
@@ -135,42 +149,42 @@ const ProductList: React.FC = () => {
                 Eliminar
               </OrangeButton>
             </StyledMobileCard>
-          ))}
-        </>
-      ) : (
-        <StyledTableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Categoría</TableCell>
-                <TableCell>Precio</TableCell>
-                <TableCell>Descripción</TableCell>
-                <TableCell>Stock</TableCell>
-                <TableCell align="right">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>{product.id}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>CLP${product.price.toLocaleString()}</TableCell>
-                  <TableCell>{product.description}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
-                  <TableCell align="right">
-                    <OrangeButton size="small" onClick={() => handleDeleteProduct(product.id)}>
-                      Eliminar
-                    </OrangeButton>
-                  </TableCell>
+          ))
+        ) : (
+          <StyledTableContainer>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Categoría</TableCell>
+                  <TableCell>Precio</TableCell>
+                  <TableCell>Descripción</TableCell>
+                  <TableCell>Stock</TableCell>
+                  <TableCell align="right">Acciones</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </StyledTableContainer>
-      )}
+              </TableHead>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell>{product.id}</TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{product.category}</TableCell>
+                    <TableCell>CLP${product.price.toLocaleString()}</TableCell>
+                    <TableCell>{product.description}</TableCell>
+                    <TableCell>{product.stock}</TableCell>
+                    <TableCell align="right">
+                      <OrangeButton size="small" onClick={() => handleDeleteProduct(product.id)}>
+                        Eliminar
+                      </OrangeButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </StyledTableContainer>
+        )}
+      </Box>
 
       <ProductModal
         open={isModalOpen}

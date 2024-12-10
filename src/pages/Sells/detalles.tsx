@@ -41,11 +41,11 @@ const Details: React.FC = () => {
         });
 
         const ranking = products.data
-          .map((product: any) => ({
-            ...product,
-            totalConsumed: productConsumption[product.id] || 0,
-          }))
-          .sort((a, b) => b.totalConsumed - a.totalConsumed);
+        .map((product: any) => ({
+          ...product,
+          totalConsumed: productConsumption[product.id] || 0,
+        }))
+        .sort((a: any, b: any) => b.totalConsumed - a.totalConsumed);
 
         setRanking(ranking);
         setLoading(false);
