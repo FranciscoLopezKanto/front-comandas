@@ -52,13 +52,16 @@ export function TableDetails() {
         const response = await fetch("http://localhost:3000/product");
         const data = await response.json();
         if (data.success === "success") {
-          setProducts(data.data);
-          setFilteredProducts(data.data);
+          // Ordenar los productos por ID antes de almacenarlos en el estado
+          const sortedProducts = data.data.sort((a: any, b: any) => a.id - b.id);
+          setProducts(sortedProducts);
+          setFilteredProducts(sortedProducts);
         }
       } catch (error) {
         console.error("Error al obtener los productos:", error);
       }
     };
+  
 
     fetchProducts();
   }, []);
@@ -143,7 +146,7 @@ export function TableDetails() {
   }, [tableId, isOccupied]);
   
   const sendOrder = async () => {
-    const user_id = 1;
+    const user_id = 2;
     const tablenumber = tableId;
   
     try {
@@ -228,7 +231,7 @@ export function TableDetails() {
           </FormControl>
 
           {filteredProducts.map((product) => (
-            <Card key={product.id} sx={{ marginBottom: 2 }}>
+            <Card key={product.id} sx={{ marginBottom: 1 }}>
               <CardContent>
                 <Typography variant="h6">{product.name}</Typography>
                 <Typography variant="body2">Precio: ${product.price}</Typography>

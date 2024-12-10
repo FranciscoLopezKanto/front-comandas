@@ -10,6 +10,8 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  TextField,
+  Button,
 } from "@mui/material";
 import { useMediaQuery, useTheme } from "@mui/system";
 import axios from "axios";
@@ -36,24 +38,28 @@ const ProductList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [notification, setNotification] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [newStock, setNewStock] = useState<number | "">("");
+  const [newPrice, setNewPrice] = useState<number | "">("");
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Desactivar el scroll del navegador
   useEffect(() => {
-    document.body.style.overflow = "hidden"; // Desactiva el scroll del navegador
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "auto"; // Reactiva el scroll al desmontar
+      document.body.style.overflow = "auto";
     };
   }, []);
 
-  // Obtener productos desde la API
+  // Obtener productos desde la API y ordenar por ID
   const fetchAllProducts = async () => {
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:3000/product");
-      setProducts(response.data.data);
+      const sortedProducts = response.data.data.sort((a: Product, b: Product) => a.id - b.id);
+      setProducts(sortedProducts);
     } catch (error) {
       console.error("Error al obtener productos:", error);
     } finally {
@@ -74,7 +80,6 @@ const ProductList: React.FC = () => {
         description: newProduct.description,
         category: newProduct.category,
       };
-
       const response = await axios.post("http://localhost:3000/product", payload);
       setProducts((prevProducts) => [...prevProducts, response.data.data]);
       setNotification("Producto agregado exitosamente");
@@ -85,14 +90,35 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleUpdateProduct = async () => {
+    if (!selectedProduct) return;
     try {
-      await axios.delete(`http://localhost:3000/product/${id}`);
-      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
-      setNotification("Producto eliminado exitosamente");
+      const updatedProduct = {
+        product: selectedProduct.name,
+        newnameProduct: selectedProduct.name,
+        newPrice: newPrice || selectedProduct.price,
+        newStock: newStock || selectedProduct.stock,
+        newDescription: selectedProduct.description,
+        newCategory: selectedProduct.category,
+      };
+
+      await axios.put("http://localhost:3000/product", updatedProduct);
+
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === selectedProduct.id
+            ? { ...product, price: newPrice || selectedProduct.price, stock: newStock || selectedProduct.stock }
+            : product
+        )
+      );
+
+      setNotification("Producto actualizado exitosamente");
+      setIsUpdateModalOpen(false);
+      setNewStock("");
+      setNewPrice("");
     } catch (error) {
-      console.error("Error al eliminar producto:", error);
-      setNotification("Error al eliminar el producto");
+      console.error("Error al actualizar el producto:", error);
+      setNotification("Error al actualizar el producto");
     }
   };
 
@@ -129,8 +155,8 @@ const ProductList: React.FC = () => {
 
       <Box
         sx={{
-          maxHeight: "450px", // Caja más alta
-          overflowY: "scroll", // Barra de desplazamiento personalizada
+          maxHeight: "450px",
+          overflowY: "scroll",
           border: "1px solid #ccc",
           mt: 2,
         }}
@@ -145,8 +171,14 @@ const ProductList: React.FC = () => {
               <Typography variant="body2">Precio: CLP${product.price.toLocaleString()}</Typography>
               <Typography variant="body2">Descripción: {product.description}</Typography>
               <Typography variant="body2">Stock: {product.stock}</Typography>
-              <OrangeButton size="small" onClick={() => handleDeleteProduct(product.id)}>
-                Eliminar
+              <OrangeButton
+                size="small"
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setIsUpdateModalOpen(true);
+                }}
+              >
+                Actualizar Producto
               </OrangeButton>
             </StyledMobileCard>
           ))
@@ -174,8 +206,14 @@ const ProductList: React.FC = () => {
                     <TableCell>{product.description}</TableCell>
                     <TableCell>{product.stock}</TableCell>
                     <TableCell align="right">
-                      <OrangeButton size="small" onClick={() => handleDeleteProduct(product.id)}>
-                        Eliminar
+                      <OrangeButton
+                        size="small"
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setIsUpdateModalOpen(true);
+                        }}
+                      >
+                        Actualizar Producto
                       </OrangeButton>
                     </TableCell>
                   </TableRow>
@@ -186,11 +224,56 @@ const ProductList: React.FC = () => {
         )}
       </Box>
 
-      <ProductModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={handleAddProduct}
-      />
+      {/* Modal para actualizar producto */}
+      {isUpdateModalOpen && selectedProduct && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 2,
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            zIndex: 9999, // Asegura que esté encima de otros elementos
+          }}
+        >
+          <Typography variant="h6">Actualizar Producto</Typography>
+
+          {/* Campo de Precio */}
+          <TextField
+            label="Nuevo Precio"
+            type="number"
+            value={newPrice === "" ? selectedProduct.price : newPrice}
+            onChange={(e) => setNewPrice(Number(e.target.value) || "")}
+            fullWidth
+          />
+
+          {/* Campo de Stock */}
+          <TextField
+            label="Nuevo Stock"
+            type="number"
+            value={newStock === "" ? selectedProduct.stock : newStock}
+            onChange={(e) => setNewStock(Number(e.target.value) || "")}
+            fullWidth
+          />
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button variant="outlined" onClick={() => setIsUpdateModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="contained" color="primary" onClick={handleUpdateProduct}>
+              Actualizar
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      <ProductModal open={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={handleAddProduct} />
 
       <Snackbar
         open={!!notification}

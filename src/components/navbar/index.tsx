@@ -65,6 +65,21 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
 
             <Button
               component={Link}
+              to="/productos"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Ver Productos
+            </Button>
+
+            <Button
+              component={Link}
               to="/detalles"
               variant="outlined"
               color="inherit"
@@ -80,7 +95,7 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
 
             <Button
               component={Link}
-              to="/ventas"
+              to="/ordenes"
               variant="outlined"
               color="inherit"
               sx={{
@@ -90,7 +105,7 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
                 },
               }}
             >
-              Gráficos ventas
+              Ver Órdenes
             </Button>
 
             <Button
@@ -107,84 +122,6 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
             >
               Datos Usuario
             </Button>
-
-            <Button
-              component={Link}
-              to="/productos"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ver productos
-            </Button>
-
-            <Button
-              component={Link}
-              to="/productos/agregar"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Agregar productos
-            </Button>
-
-            <Button
-              component={Link}
-              to="/productos/ver-todos"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ver Todos los Productos
-            </Button>
-
-            {/* Nuevo botón para la vista Sells */}
-            <Button
-              component={Link}
-              to="/sells"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ventas
-            </Button>
-            
-            <Button
-              component={Link}
-              to="/ordenes"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ver Órdenes
-            </Button>
-
-
 
             <Button
               variant="contained"
@@ -227,29 +164,23 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/ventas">
-                <ListItemText primary="Gráficos ventas" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
               <ListItemButton component={Link} to="/productos">
-                <ListItemText primary="Ver productos" />
+                <ListItemText primary="Ver Productos" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/productos/agregar">
-                <ListItemText primary="Agregar productos" />
+              <ListItemButton component={Link} to="/detalles">
+                <ListItemText primary="Detalles" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/productos/ver-todos">
-                <ListItemText primary="Ver Todos los Productos" />
+              <ListItemButton component={Link} to="/ordenes">
+                <ListItemText primary="Ver Órdenes" />
               </ListItemButton>
             </ListItem>
-            {/* Nueva opción para la vista Sells */}
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/sells">
-                <ListItemText primary="Ventas" />
+              <ListItemButton component={Link} to="/usuario">
+                <ListItemText primary="Datos Usuario" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

@@ -1,7 +1,7 @@
 .container {
-  display: flex;
-  margin: auto;
-  flex-direction: column;
+  margin-top: 40px; /* Ajuste sutil para que el navbar no tape el título */
+  padding: 20px;
+  text-align: center;
 }
 
 .title {
