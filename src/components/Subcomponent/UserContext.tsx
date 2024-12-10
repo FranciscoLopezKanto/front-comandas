@@ -11,45 +11,30 @@ type User = {
 
 type UserContextProps = {
   users: User[];
-  login: (email: string, password: string) => string | null;
+  currentUser: User | null;
+  login: (email: string, password: string) => User | null;
   register: (name: string, email: string, password: string) => string | null;
 };
 
 const preloadedUsers: User[] = [
-  {
-    user_id: 1,
-    name: 'seba',
-    email: 'seba@gmail.com',
-    password: '123456',
-    rol: 'admin',
-    token: 'token-123',
-  },
-  {
-    user_id: 2,
-    name: 'Felipe',
-    email: 'felipe@gmail.com',
-    password: '123456',
-    rol: 'user',
-    token: 'token-234',
-  },
-  {
-    user_id: 3,
-    name: 'Mateo',
-    email: 'mateo@gmail.com',
-    password: '123456',
-    rol: 'user',
-    token: 'token-345',
-  },
+  { user_id: 1, name: 'seba', email: 'seba@gmail.com', password: '123456', rol: 'admin', token: 'token-123' },
+  { user_id: 2, name: 'Felipe', email: 'felipe@gmail.com', password: '123456', rol: 'user', token: 'token-234' },
+  { user_id: 3, name: 'Mateo', email: 'mateo@gmail.com', password: '123456', rol: 'user', token: 'token-345' },
 ];
 
 export const UserContext = createContext<UserContextProps | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [users, setUsers] = useState<User[]>(preloadedUsers);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const login = (email: string, password: string): string | null => {
+  const login = (email: string, password: string): User | null => {
     const user = users.find((u) => u.email === email && u.password === password);
-    return user ? user.token : null;
+    if (user) {
+      setCurrentUser(user); // Guarda el usuario autenticado
+      return user;
+    }
+    return null;
   };
 
   const register = (name: string, email: string, password: string): string | null => {
@@ -70,7 +55,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ users, login, register }}>
+    <UserContext.Provider value={{ users, currentUser, login, register }}>
       {children}
     </UserContext.Provider>
   );

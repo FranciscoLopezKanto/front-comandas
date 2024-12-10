@@ -17,11 +17,12 @@ export const Login = ({ onLogin }: LoginProps) => {
     e.preventDefault();
     if (!userContext) return;
 
-    const token = userContext.login(email, password);
-    if (token) {
+    const user = userContext.login(email, password);
+    if (user) {
       alert('Inicio de sesión exitoso.');
-      onLogin(token); // Maneja el token según sea necesario
-      navigate('/dashboard'); // Cambia la ruta según tu lógica
+      onLogin(user.token);
+      console.log('Usuario autenticado:', user); // Muestra el usuario en consola
+      navigate('/dashboard'); // Redirige a otra vista
     } else {
       alert('Credenciales inválidas. Intenta nuevamente.');
     }

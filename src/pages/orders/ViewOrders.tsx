@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { UserContext } from '../../components/Subcomponent/UserContext';
 
 interface Product {
   id: number;
@@ -102,6 +103,7 @@ const ViewOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [userId, setUserId] = useState<number>(1);
   const [userIds, setUserIds] = useState<number[]>([]); // Lista de IDs de usuarios
+  const { users } = useContext(UserContext)!; // Obtener usuarios del contexto
 
   useEffect(() => {
     // Fetch all orders from the API
@@ -129,17 +131,20 @@ const ViewOrders: React.FC = () => {
       <Header>Detalle de Órdenes</Header>
 
       <SelectContainer>
-        <label htmlFor="userId">Filtrar por ID de Usuario:&nbsp;</label>
+        <label htmlFor="userId">Filtrar por Usuario:&nbsp;</label>
         <select
           id="userId"
           value={userId}
           onChange={(e) => setUserId(Number(e.target.value))}
         >
-          {userIds.map(id => (
-            <option key={id} value={id}>
-              Usuario #{id}
-            </option>
-          ))}
+          {userIds.map(id => {
+            const user = users.find((user) => user.user_id === id); // Encuentra el usuario por su ID
+            return (
+              <option key={id} value={id}>
+                {user ? user.name : `Usuario #${id}`}
+              </option>
+            );
+          })}
         </select>
       </SelectContainer>
 

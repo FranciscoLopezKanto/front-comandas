@@ -6,9 +6,8 @@ import PersonIcon from '@mui/icons-material/Person'; // Icono de usuario
 export const DataUser = () => {
   const userContext = useContext(UserContext);
 
-  // Aquí deberíamos obtener el usuario actual. 
-  // Para este ejemplo, asumimos que el primer usuario es el logueado.
-  const currentUser = userContext?.users[0]; // Reemplázalo con tu lógica de autenticación.
+  // Obtener el usuario actual desde el contexto
+  const currentUser = userContext?.currentUser;
 
   if (!currentUser) {
     return (
