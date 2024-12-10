@@ -13,6 +13,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { Delete } from "@mui/icons-material"; // Ícono de eliminación
 import { useMediaQuery, useTheme } from "@mui/system";
 import axios from "axios";
 import ProductModal from "./AddProductModal";
@@ -53,7 +54,7 @@ const ProductList: React.FC = () => {
     };
   }, []);
 
-  // Obtener productos desde la API y ordenar por ID
+  // Obtener productos desde la API
   const fetchAllProducts = async () => {
     try {
       setLoading(true);
@@ -122,6 +123,17 @@ const ProductList: React.FC = () => {
     }
   };
 
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3000/product/${id}`);
+      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+      setNotification("Producto eliminado exitosamente");
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+      setNotification("Error al eliminar el producto");
+    }
+  };
+
   const handleCloseNotification = () => {
     setNotification("");
   };
@@ -171,15 +183,25 @@ const ProductList: React.FC = () => {
               <Typography variant="body2">Precio: CLP${product.price.toLocaleString()}</Typography>
               <Typography variant="body2">Descripción: {product.description}</Typography>
               <Typography variant="body2">Stock: {product.stock}</Typography>
-              <OrangeButton
-                size="small"
-                onClick={() => {
-                  setSelectedProduct(product);
-                  setIsUpdateModalOpen(true);
-                }}
-              >
-                Actualizar Producto
-              </OrangeButton>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+                <OrangeButton
+                  size="small"
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setIsUpdateModalOpen(true);
+                  }}
+                >
+                  Actualizar Producto
+                </OrangeButton>
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => handleDeleteProduct(product.id)}
+                  startIcon={<Delete />}
+                >
+                  Eliminar
+                </Button>
+              </Box>
             </StyledMobileCard>
           ))
         ) : (
@@ -215,6 +237,14 @@ const ProductList: React.FC = () => {
                       >
                         Actualizar Producto
                       </OrangeButton>
+                      <Button
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteProduct(product.id)}
+                        startIcon={<Delete />}
+                      >
+                        Eliminar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -224,56 +254,17 @@ const ProductList: React.FC = () => {
         )}
       </Box>
 
-      {/* Modal para actualizar producto */}
-      {isUpdateModalOpen && selectedProduct && (
-        <Box
-          sx={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            borderRadius: 2,
-            p: 3,
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            zIndex: 9999, // Asegura que esté encima de otros elementos
-          }}
-        >
-          <Typography variant="h6">Actualizar Producto</Typography>
-
-          {/* Campo de Precio */}
-          <TextField
-            label="Nuevo Precio"
-            type="number"
-            value={newPrice === "" ? selectedProduct.price : newPrice}
-            onChange={(e) => setNewPrice(Number(e.target.value) || "")}
-            fullWidth
-          />
-
-          {/* Campo de Stock */}
-          <TextField
-            label="Nuevo Stock"
-            type="number"
-            value={newStock === "" ? selectedProduct.stock : newStock}
-            onChange={(e) => setNewStock(Number(e.target.value) || "")}
-            fullWidth
-          />
-
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <Button variant="outlined" onClick={() => setIsUpdateModalOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleUpdateProduct}>
-              Actualizar
-            </Button>
-          </Box>
-        </Box>
-      )}
-
       <ProductModal open={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={handleAddProduct} />
+
+      {selectedProduct && (
+        <ProductModal
+          open={isUpdateModalOpen}
+          onClose={() => setIsUpdateModalOpen(false)}
+          onConfirm={handleUpdateProduct}
+          product={selectedProduct}
+          isUpdate
+        />
+      )}
 
       <Snackbar
         open={!!notification}

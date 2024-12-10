@@ -9,10 +9,10 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemText,
+  ListItemIcon,
   Box,
 } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, TableChart, ShoppingCart, Analytics, Assignment, Person, Logout } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 type NavbarProps = {
@@ -48,81 +48,21 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
 
           {/* Botones en Escritorio */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            <Button
-              component={Link}
-              to="/"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ir a Mesas
-            </Button>
-
-            <Button
-              component={Link}
-              to="/productos"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ver Productos
-            </Button>
-
-            <Button
-              component={Link}
-              to="/detalles"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Detalles
-            </Button>
-
-            <Button
-              component={Link}
-              to="/ordenes"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Ver Órdenes
-            </Button>
-
-            <Button
-              component={Link}
-              to="/usuario"
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderColor: 'white',
-                ':hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Datos Usuario
-            </Button>
-
+            <IconButton component={Link} to="/" color="inherit">
+              <TableChart />
+            </IconButton>
+            <IconButton component={Link} to="/productos" color="inherit">
+              <ShoppingCart />
+            </IconButton>
+            <IconButton component={Link} to="/detalles" color="inherit">
+              <Analytics />
+            </IconButton>
+            <IconButton component={Link} to="/ordenes" color="inherit">
+              <Assignment />
+            </IconButton>
+            <IconButton component={Link} to="/usuario" color="inherit">
+              <Person />
+            </IconButton>
             <Button
               variant="contained"
               color="secondary"
@@ -160,32 +100,44 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
           <List>
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/">
-                <ListItemText primary="Ir a Mesas" />
+                <ListItemIcon>
+                  <TableChart />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/productos">
-                <ListItemText primary="Ver Productos" />
+                <ListItemIcon>
+                  <ShoppingCart />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/detalles">
-                <ListItemText primary="Detalles" />
+                <ListItemIcon>
+                  <Analytics />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/ordenes">
-                <ListItemText primary="Ver Órdenes" />
+                <ListItemIcon>
+                  <Assignment />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/usuario">
-                <ListItemText primary="Datos Usuario" />
+                <ListItemIcon>
+                  <Person />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton onClick={onLogout}>
-                <ListItemText primary="Cerrar Sesión" />
+                <ListItemIcon>
+                  <Logout />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
           </List>
