@@ -17,7 +17,6 @@ import { useTables } from "../TablesContext";
 import { GetOrderIdContext } from "../GetOrderIdContext";
 import { PostCompleteOrderContext } from "../PostCompleteOrder";
 import { UserContext } from "../../../components/Subcomponent/UserContext";
-// Importa el contexto de usuario
 
 export function TableDetails() {
   const navigate = useNavigate();
@@ -25,17 +24,15 @@ export function TableDetails() {
   const { tables, setTableStatus } = useTables();
   const { lastOrderId, fetchLastOrderId, refreshOrderId } = useContext(GetOrderIdContext)!;
   const { updateOrderStatus } = useContext(PostCompleteOrderContext)!;
-  const { currentUser } = useContext(UserContext)!; // Accede al usuario logueado
-  const tableId = parseInt(id || "0");
+  const { currentUser } = useContext(UserContext)!;
 
+  const tableId = parseInt(id || "0");
   const table = tables.find((table) => table.id === tableId);
   const [isOccupied, setIsOccupied] = useState(table?.status === 1);
-
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [cart, setCart] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-
   const [notes, setNotes] = useState<{ [productId: number]: string }>({});
 
   useEffect(() => {
@@ -104,7 +101,7 @@ export function TableDetails() {
           ? { ...item, quantity: item.quantity - 1, totalPrice: item.totalPrice - item.price }
           : item
       )
-      .filter((item) => item.quantity > 0); // Filtrar los productos con cantidad 0
+      .filter((item) => item.quantity > 0);
     setCart(updatedCart);
   };
 
@@ -118,7 +115,7 @@ export function TableDetails() {
 
   const saveCartToLocalStorage = (currentCart: any[], currentNotes: { [productId: number]: string }) => {
     localStorage.setItem(`table_${tableId}_cart`, JSON.stringify(currentCart));
-    localStorage.setItem(`table_${tableId}_notes`, JSON.stringify(currentNotes)); // Guardar notas
+    localStorage.setItem(`table_${tableId}_notes`, JSON.stringify(currentNotes));
   };
 
   const handleTableInOrder = () => {
@@ -128,7 +125,6 @@ export function TableDetails() {
     alert("El carrito actual y las notas han sido guardados. La mesa está en pedido.");
   };
 
-  // Al cargar el carrito y notas guardadas desde localStorage:
   useEffect(() => {
     if (isOccupied) {
       const storedCart = localStorage.getItem(`table_${tableId}_cart`);
@@ -152,7 +148,7 @@ export function TableDetails() {
       return;
     }
 
-    const user_id = currentUser.user_id; // Obtener el user_id del usuario logueado
+    const user_id = currentUser.user_id;
     const tablenumber = tableId;
 
     try {
@@ -161,11 +157,11 @@ export function TableDetails() {
 
       for (const item of cart) {
         const orderData = {
-          user_id, // Usar el user_id del usuario logueado
+          user_id,
           product_id: item.id,
           quantity: item.quantity,
           tablenumber,
-          note: notes[item.id] || "", // Enviar la nota asociada al producto
+          note: notes[item.id] || "",
         };
 
         const response = await fetch("http://localhost:3000/order", {
@@ -192,11 +188,11 @@ export function TableDetails() {
       }
 
       localStorage.removeItem(`table_${tableId}_cart`);
-      localStorage.removeItem(`table_${tableId}_notes`); // Limpiar las notas del localStorage
+      localStorage.removeItem(`table_${tableId}_notes`);
       setIsOccupied(false);
       setTableStatus(tableId, 0);
       setCart([]);
-      setNotes({}); // Limpiar notas
+      setNotes({});
     } catch (error) {
       console.error("Error al enviar el pedido:", error);
       alert("Error al enviar el pedido. Inténtalo nuevamente.");
@@ -297,27 +293,27 @@ export function TableDetails() {
               Total: ${getCartTotal()}
             </Typography>
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={sendOrder}
-              sx={{ marginTop: 2 }}
-              disabled={cart.length === 0}
-            >
-              Enviar Pedido
-            </Button>
+            <Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={sendOrder}
+                disabled={cart.length === 0}
+              >
+                Enviar Pedido
+              </Button>
+
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleTableInOrder}
+              >
+                Mesa en Pedido
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
-
-      <Button
-        variant="contained"
-        color="success"
-        onClick={handleTableInOrder}
-        sx={{ marginTop: 3 }}
-      >
-        Marcar mesa como en pedido
-      </Button>
     </Box>
   );
 }
