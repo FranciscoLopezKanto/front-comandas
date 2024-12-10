@@ -65,6 +65,21 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
 
             <Button
               component={Link}
+              to="/detalles"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Detalles
+            </Button>
+
+            <Button
+              component={Link}
               to="/ventas"
               variant="outlined"
               color="inherit"
@@ -76,6 +91,21 @@ export const Navbar = ({ onLogout }: NavbarProps) => {
               }}
             >
               Gráficos ventas
+            </Button>
+
+            <Button
+              component={Link}
+              to="/usuario"
+              variant="outlined"
+              color="inherit"
+              sx={{
+                borderColor: 'white',
+                ':hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Datos Usuario
             </Button>
 
             <Button

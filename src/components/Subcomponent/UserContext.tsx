@@ -15,21 +15,37 @@ type UserContextProps = {
   register: (name: string, email: string, password: string) => string | null;
 };
 
-const initialUsers: User[] = [
+const preloadedUsers: User[] = [
   {
     user_id: 1,
-    name: 'sebas',
-    email: 'sebas@gmail.com',
+    name: 'seba',
+    email: 'seba@gmail.com',
     password: '123456',
     rol: 'admin',
     token: 'token-123',
+  },
+  {
+    user_id: 2,
+    name: 'Felipe',
+    email: 'felipe@gmail.com',
+    password: '123456',
+    rol: 'user',
+    token: 'token-234',
+  },
+  {
+    user_id: 3,
+    name: 'Mateo',
+    email: 'mateo@gmail.com',
+    password: '123456',
+    rol: 'user',
+    token: 'token-345',
   },
 ];
 
 export const UserContext = createContext<UserContextProps | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>(preloadedUsers);
 
   const login = (email: string, password: string): string | null => {
     const user = users.find((u) => u.email === email && u.password === password);

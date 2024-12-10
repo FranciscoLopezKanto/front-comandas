@@ -3,7 +3,6 @@ import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../components/Subcomponent/UserContext';
 
-
 export const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,7 +17,7 @@ export const Register = () => {
     const token = userContext.register(name, email, password);
     if (token) {
       alert('Usuario registrado con éxito.');
-      navigate('/login');
+      navigate('/login'); // Cambia la ruta según tu lógica
     } else {
       alert('El correo ya está registrado.');
     }

@@ -3,7 +3,6 @@ import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../components/Subcomponent/UserContext';
 
-
 type LoginProps = {
   onLogin: (token: string) => void;
 };
@@ -20,9 +19,11 @@ export const Login = ({ onLogin }: LoginProps) => {
 
     const token = userContext.login(email, password);
     if (token) {
-      onLogin(token);
+      alert('Inicio de sesión exitoso.');
+      onLogin(token); // Maneja el token según sea necesario
+      navigate('/dashboard'); // Cambia la ruta según tu lógica
     } else {
-      alert('Credenciales inválidas.');
+      alert('Credenciales inválidas. Intenta nuevamente.');
     }
   };
 

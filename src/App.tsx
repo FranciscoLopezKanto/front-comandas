@@ -16,6 +16,8 @@ import { ViewOrders } from './pages/orders/ViewOrders';
 import { PostCompleteOrderProvider } from './pages/Tables/PostCompleteOrder';
 import { UserProvider } from './components/Subcomponent/UserContext';
 import { Register } from './pages/Register/register';
+import { DataUser } from './components/Subcomponent/DataUser';
+import Details from './pages/Sells/detalles'; // Importa la nueva vista
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,7 +28,7 @@ function App() {
   }, []);
 
   const handleLogin = (token: string) => {
-    localStorage.setItem('authToken', token); // Guarda el token del usuario autenticado
+    localStorage.setItem('authToken', token);
     setIsLoggedIn(true);
   };
 
@@ -53,6 +55,8 @@ function App() {
                       <Route path="/productos/ver-todos" element={<ViewAllProduct />} />
                       <Route path="/sells" element={<SalesChart />} />
                       <Route path="/ordenes" element={<ViewOrders />} />
+                      <Route path="/usuario" element={<DataUser />} />
+                      <Route path="/detalles" element={<Details />} /> {/* Nueva ruta */}
                     </Routes>
                   </>
                 ) : (

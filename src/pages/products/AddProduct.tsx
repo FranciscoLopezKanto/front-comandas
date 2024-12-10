@@ -9,7 +9,7 @@ export const AddProduct = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
-  const categories = ['Bebida', 'Comida', 'Postre', 'Otros']; // Ejemplo de categorías
+  const categories = ['Bebida', 'Comida', 'Entrada', 'Principal', 'Postre']; // Ejemplo de categorías
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +56,9 @@ export const AddProduct = () => {
           onChange={(e) => setName(e.target.value)}
           fullWidth
           required
+          InputProps={{
+            style: { backgroundColor: 'white' },
+          }}
         />
         <TextField
           label="Precio"
@@ -65,6 +68,9 @@ export const AddProduct = () => {
           type="number"
           fullWidth
           required
+          InputProps={{
+            style: { backgroundColor: 'white' },
+          }}
         />
         <TextField
           label="Stock"
@@ -74,6 +80,9 @@ export const AddProduct = () => {
           type="number"
           fullWidth
           required
+          InputProps={{
+            style: { backgroundColor: 'white' },
+          }}
         />
         <TextField
           label="Descripción"
@@ -84,6 +93,9 @@ export const AddProduct = () => {
           multiline
           rows={3}
           required
+          InputProps={{
+            style: { backgroundColor: 'white' },
+          }}
         />
         <TextField
           label="Categoría"
@@ -93,6 +105,9 @@ export const AddProduct = () => {
           select
           fullWidth
           required
+          InputProps={{
+            style: { backgroundColor: 'white' },
+          }}
         >
           {categories.map((cat) => (
             <MenuItem key={cat} value={cat}>
